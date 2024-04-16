@@ -6,7 +6,40 @@
     <title>Document</title>
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
-<body>
-    
+<body class="h-screen">
+    <div class="flex flex-row h-12">
+        <div class="group basis-1/6 bg-blue-400">
+            <label>Menu</label>
+            <ul class="hidden relative group-hover:block w-full bg-gray-400">
+                <li><a href="./map.html">Mapa</a></li>
+                <li>Ranking</li>
+                <li><a href="./profile.html">Profil</a></li>
+                <li>Wyloguj</li>
+            </ul>
+        </div>
+        <div class="basis-4/6 bg-red-400 text-center mx-auto">
+            Mapa
+        </div>
+        <div class="basis-1/6 bg-green-400">
+            profil + ranga
+        </div>
+    </div>
+    <div class="h-[calc(100%-3rem)] p-1 overflow-y-auto">
+        <div class="h-full overflow-y-auto">
+            {% for i in range(15) %}
+                <div class="flex flex-row h-16 bg-gray-300 items-center m-1 rounded-lg">
+                    <div class="flex-initial w-[calc(100%-1.25rem)] bg-blue-500">
+                        <label>Nazwa użytkownika</label> <br>
+                        <label>Punkty</label>
+                    </div>
+                    <div class="size-14 bg-gray-400 rounded-lg flex-none flex items-center m-1">
+                        <div class="size-12 bg-orange-800 rounded-full flex items-center m-auto">
+                            <p class="text-yellow-500 text-center m-auto">#{{ loop.index }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>

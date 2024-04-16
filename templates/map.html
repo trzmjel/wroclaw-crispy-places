@@ -3,19 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map page</title>
+    <title>Mapa</title>
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
 <body class="h-screen">
-    <div class="flex flex-row h-12">
-        <button class="basis-1/6">
-            menu
-        </button>
-        <div class="basis-4/6 bg-red-400 text-center mx-auto">
-            Map
+    <div class="flex flex-row h-12 items-center">
+        <div class="group basis-1/6 rounded-lg m-1 text-center bg-blue-400">
+            <label>Menu</label>
+            <ul class="hidden relative group-hover:block w-full bg-gray-400">
+                <!-- Możesz pokombinować jak w jinja przenosić się pomiędzy zakładkami klikająć w anchor czy coś podobnego -->
+                <li>Mapa</li>
+                <li><a href="./scanner.html">QR</a></li>
+                <li><a href="./scoreboard.html">Ranking</a></li>
+                <li><a href="./profile.html">Profil</a></li>
+                <li>Wyloguj</li>
+            </ul>
         </div>
-        <div class="basis-1/6 bg-green-400">
-            profil + ranga
+        <div class="basis-4/6 bg-red-400 rounded-lg m-1 text-center mx-auto">
+            <label class="">Mapa</label>
+        </div>
+        <div class="basis-1/6 rounded-lg m-1 text-center bg-green-400">
+            <label>profil + ranga</label>
         </div>
     </div>
     <div class="h-[calc(100%-3rem)] p-1">

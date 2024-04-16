@@ -27,6 +27,16 @@ def map():
     iframe = m.get_root()._repr_html_()
     return render_template('map.html', iframe=iframe)
 
+# szybkie podpięcie po możliwość podglądu strony; do edycji
+@app.route("/scoreboard")
+def scoreboard():
+    return render_template("scoreboard.html")
+
+# szybkie podpięcie po możliwość podglądu strony; do edycji
+@app.route("/profile")
+def profile():
+    return render_template("profile.html")
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(13)
     app.run(debug=True,host='0.0.0.0', port=8000, ssl_context='adhoc')

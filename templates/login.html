@@ -1,13 +1,21 @@
-{% block body %}
-{% if session['logged_in'] %}
-
-Jesteś już zalogowany!   
-
-{% else %}
-<form action="/login" method="POST">
-  <input type="login" name="login" placeholder="Login">   
-<input type="password" name="password" placeholder="Hasło">   
-<input type="submit" value="Zaloguj sie">  
-</form>
-{% endif %}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona logowania</title>
+    <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
+</head>
+<body class="h-screen">
+    {% if session['logged_in'] %}
+    <!-- zrób przekierowanie do map.html; do wyrzucenia ten paragraf poniżej -->
+    <p>Jesteś już zalogowany!</p>
+    {% else %}
+    <form action="/login" method="POST" class="content-center content-round text-center mx-auto mt-48 size-64 rounded-lg bg-gray-500 grid grid-cols-1">
+        <input type="login" name="login" placeholder="login" class="text-center w-11/12 mx-auto rounded-lg"> <br>
+        <input type="password" name="password" placeholder="hasło" class="text-center w-11/12 mx-auto rounded-lg"> <br>
+        <input type="submit" value="Zaloguj" class="bg-blue-300 w-11/12 mx-auto rounded-lg">
+    </form>
+    {% endif %}
+</body>
+</html>

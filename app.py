@@ -1,5 +1,5 @@
 from flask import Flask, session, render_template, request
-import os
+import os, folium
 
 app = Flask(__name__)
 
@@ -16,6 +16,16 @@ def app_login():
     if request.form['login'] == 'admin' and request.form['password'] == 'admin':
         session['logged_in'] = True
     return home()
+
+# Powiąż to z map.html 
+@app.route("/map")
+def map():
+    start_coords = (51.1, 17.03333)
+    m = folium.Map(location = start_coords, zoom_start = 13)
+    m.get_root().width = "100%"
+    m.get_root().height = "100%"
+    iframe = m.get_root()._repr_html_()
+    return render_template('map.html', iframe=iframe)
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(13)

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map page</title>
+    <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
+</head>
+<body class="h-screen">
+    <div class="flex flex-row h-12">
+        <button class="basis-1/6">
+            menu
+        </button>
+        <div class="basis-4/6 bg-red-400 text-center mx-auto">
+            Map
+        </div>
+        <div class="basis-1/6 bg-green-400">
+            profil + ranga
+        </div>
+    </div>
+    <div class="h-[calc(100%-3rem)] p-1">
+        {{ iframe | safe }}
+    </div>
+</body>
+</html>

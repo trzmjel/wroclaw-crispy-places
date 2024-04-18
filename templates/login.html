@@ -6,15 +6,15 @@
     <title>Strona logowania</title>
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
-<body class="h-screen">
+<body class="h-screen overflow-hidden text-[#5f4f53] bg-pattern-stripes">
     {% if session['logged_in'] %}
     <!-- zrób przekierowanie do map.html; do wyrzucenia ten paragraf poniżej -->
     <p>Jesteś już zalogowany!</p>
     {% else %}
-    <form action="/login" method="POST" class="content-center content-round text-center mx-auto mt-48 size-64 rounded-lg bg-gray-500 grid grid-cols-1">
-        <input type="login" name="login" placeholder="login" class="text-center w-11/12 mx-auto rounded-lg"> <br>
-        <input type="password" name="password" placeholder="hasło" class="text-center w-11/12 mx-auto rounded-lg"> <br>
-        <input type="submit" value="Zaloguj" class="bg-blue-300 w-11/12 mx-auto rounded-lg">
+    <form class="border-[#d2cec6] border-2 bg-[#f7f2ec] content-center content-round text-center mx-auto mt-48 size-64 rounded-lg grid grid-cols-1" action="/login" method="POST">
+        <input class="border-[#d2cec6] border text-center w-11/12 mx-auto rounded-lg text-base p-2.5" type="login" name="login" placeholder="login"> <br>
+        <input class="border-[#d2cec6] border text-center w-11/12 mx-auto rounded-lg text-base p-2.5" type="password" name="password" placeholder="hasło"> <br>
+        <input class="border-[#d2cec6] border bg-blue-300 w-11/12 mx-auto rounded-lg text-base p-2.5" type="submit" value="Zaloguj">
     </form>
     {% endif %}
 </body>

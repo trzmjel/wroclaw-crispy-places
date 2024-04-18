@@ -6,7 +6,58 @@
     <title>Profil</title>
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
-<body>
-    
+<body class="h-screen">
+    <!-- Panel -->
+    <div class="flex flex-row h-12 text-2xl">
+        <!-- Nav menu -->
+        <div class="w-12 flex-none bg-blue-400 group">
+            <label>Menu</label>
+            <div class="hidden group-hover:block fixed top-12 min-w-fit max-w-max pt-2 bg-gray-300">
+                <!-- Możesz pokombinować jak w jinja przenosić się pomiędzy zakładkami klikająć w anchor czy coś podobnego -->
+                <!--<a href="./map.html">Mapa</a> <br>
+                <a href="./profile.html">Profil</a> <br>
+                <a href="./scanner.html">QR</a> <br>
+                <a href="./scoreboard.html">Ranking</a> <br>
+                <a>Wyloguj</a>-->
+                <label class="block p-1 active:bg-red-500">Mapa</label>
+                <label class="block p-1 active:bg-red-500">Profil</label>
+                <label class="block p-1 active:bg-red-500">QR</label>
+                <label class="block p-1 active:bg-red-500">Ranking</label>
+                <label class="block p-1 active:bg-red-500">Wyloguj</label>
+            </div>
+        </div>
+        <div class="grow bg-red-400 text-center border-x-2">
+            <label class="">Profil</label>
+        </div>
+        <div class="w-12 flex-none text-center bg-green-400">
+            <label class="italic">#1</label>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="h-[calc(100%-3rem)] p-1">
+        <!-- Profile data -->
+        <div class="flex flex-row h-16 bg-gray-300 items-center m-1 rounded-lg">
+            <div class="flex-initial w-[calc(100%-1.25rem)] overflow-hidden text-nowrap bg-blue-500">
+                <label class="ml-1 text-xl">Nazwa użytkownika</label> <br>
+                <label class="ml-1 text-base">Punkty: 2137</label>
+            </div>
+            <div class="size-14 bg-gray-400 rounded-lg flex-none flex items-center m-1">
+                <div class="size-12 bg-orange-800 rounded-full flex items-center m-auto">
+                    <p class="text-yellow-500 text-center m-auto text-base italic">#1</p>
+                </div>
+            </div>
+        </div>
+        <!-- Avhievements -->
+        <div class="h-[calc(100%-4.5rem)] overflow-y-auto">
+            <div class="rounded-lg flex flex-row flex-wrap p-1 m-1 bg-gray-400">
+                {% for i in range(5) %}
+                    <div class="size-28 rounded-lg m-1 bg-green-400">
+                            Achiev {{ loop.index }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil</title>
+    <title>Wrocławskie chrupiące miejsca - Gra</title>
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
 <body class="h-screen text-[#5f4f53]">
@@ -43,8 +43,8 @@
                 </svg>Wyloguj</a>
             </div>
         </div>
-        <div class="grow text-center border-x-2 p-2 shadow-lg">
-            <label class="">Profil</label>
+        <div class="flex-none overflow-hidden w-[calc(100%-6rem)] text-nowrap text-center border-x-2 p-2 shadow-lg overflow-none">
+            <label>Profil</label>
         </div>
         <div class="w-12 flex-none shadow-lg">
             <a><svg class="w-12 p-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -56,9 +56,13 @@
     <!-- Content -->
     <div class="h-[calc(100%-3rem)] p-1 py-2 bg-pattern-stripes">
         <!-- Profile data -->
+        <div class="flex flex-row">
+            <label class="block text-left w-[calc(100%-0.75rem)] pl-4 text-nowrap overflow-hidden">Wynik</label>
+            <label class="block text-left text-nowrap pl-1 pr-2 w-20">Ranga</label>
+        </div>
         <div class="flex flex-row overflow-hidden h-16 mb-2 bg-[#fcfaf6] items-center m-1 rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl shadow-lg border-[#d2cec6] border">
             <div class="flex-initial w-[calc(100%-1.25rem)] overflow-hidden text-nowrap">
-                <label class="ml-1 text-xl">Nazwa użytkownika</label> <br>
+                <label class="ml-1 text-xl">Nazwa użyszkodnika</label> <br>
                 <label class="ml-1 block w-36 text-base text-[#FCFAF6] items-center px-2 rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl bg-gradient-to-r from-[#63565b] to-[#948084]">Punkty: 2137</label>
             </div>
             <div class="size-14 overflow-hidden bg-[#bdaaac] rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl flex-none flex items-center mr-1">
@@ -68,15 +72,18 @@
             </div>
         </div>
         <!-- Avhievements -->
-        <div class="h-[calc(100%-4.5rem)] overflow-y-auto">
-            <div class="flex flex-row justify-center flex-wrap p-1 m-1">
-                {% for i in range(5) %}
-                    <div class="border-[#d2cec6] border size-28 rounded-lg m-1 shadow-lg bg-green-400">
-                            Achiev {{ loop.index }}
+            <div class="h-[calc(100%-8.5rem)] border-t-2 mt-4 border-[#d2cec6]">
+                <label class="px-4">Osiągnięcia</label>
+                <div class="h-full mt-2 overflow-y-auto">
+                    <div class="flex flex-row justify-center flex-wrap px-1 pb-1 m-1">
+                        {% for i in range(5) %}
+                            <div class="border-[#d2cec6] border size-28 rounded-lg m-1 shadow-lg bg-green-400">
+                                    Achiev {{ loop.index }}
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                </div>
             </div>
-        </div>
     </div>
 </body>
 </html>

@@ -37,6 +37,21 @@ def scoreboard():
 def profile():
     return render_template("profile.html")
 
+# szybkie podpięcie po możliwość podglądu strony; do edycji
+@app.route("/scanner")
+def scanner():
+    return render_template("scanner.html")
+
+# szybkie podpięcie po możliwość podglądu strony; do edycji
+@app.route("/location")
+def location():
+    start_coords = (51.1, 17.03333) # coordy adekwatne do klikniętego markera
+    m = folium.Map(location = start_coords, zoom_start = 13)
+    m.get_root().width = "100%"
+    m.get_root().height = "100%"
+    iframe = m.get_root()._repr_html_()
+    return render_template('location.html', iframe=iframe)
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(13)
     app.run(debug=True,host='0.0.0.0', port=8000, ssl_context='adhoc')

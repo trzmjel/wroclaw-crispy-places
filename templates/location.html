@@ -55,6 +55,7 @@
 
     <!-- Content -->
     <div class="p-1 bg-pattern-stripes">
+        <!-- Map with specific location info -->
         <div class="h-56 rounded-lg border border-[#d2cec6] overflow-hidden shadow-lg">
             {{ iframe | safe }}
         </div>
@@ -65,13 +66,25 @@
                 <label class="px-2">Zdobyło 4,20% graczy</label>
                 <label class="px-2">Zdobyto: Tak</label>
             </div>
+            <!-- Comments section -->
             <div class="h-dvh pt-2">
                 <div class="h-full border-t-2 border-[#d2cec6]">
                     <label class="px-2">Komentarze</label>
-                    <div class="h-[calc(100%-1.25rem)] overflow-y-auto">
-                        <!-- jakby Ci się chciało to estetycznie ładnie by było, gdyby występował margines dolny mb-1 we wszystkich oprócz ostatniego komentarza -->
+                    <div class="h-[calc(100%-1.5rem)] overflow-y-auto">
+                        <div class="p-1 bg-[#fcfaf6] border border-[#d2cec6] rounded-lg shadow-lg">
+                            <div class="flex flex-row overflow-hidden border-b-2 border-[#d2cec6]">
+                                <label class="block text-left w-[calc(100%-0.75rem)] px-1 text-sm text-nowrap overflow-hidden">Nazwa użyszkodnika</label>
+                            </div>
+                            <div class="flex py-1">
+                                <span contenteditable="true" class="border border-[#d2cec6] rounded-lg focus:outline-none px-1 w-[calc(100%-0.5rem)] text-wrap flex-grow min-h-20"></span>
+                            </div>
+                            <div class="flex flex-row overflow-hidden">
+                                <label class="block text-sm pl-1 p-0.5">500/500</label>
+                                <input class="block ml-auto border-[#d2cec6] border text-[#FCFAF6] bg-[#948084] p-0.5 text-sm rounded-lg" type="submit" value="Opublikuj">
+                            </div>
+                        </div>
                         {% for i in range(3) %}
-                        <div class="p-1 mb-2 bg-[#fcfaf6] border border-[#d2cec6] rounded-lg shadow-lg">
+                        <div class="p-1 mt-2 bg-[#fcfaf6] border border-[#d2cec6] rounded-lg shadow-lg">
                             <div class="flex flex-row overflow-hidden border-b-2 border-[#d2cec6]">
                                 <label class="block text-left w-[calc(100%-0.75rem)] px-1 text-sm text-nowrap overflow-hidden">Nazwa użyszkodnika</label>
                                 <label class="block text-right text-nowrap pr-1 w-24 text-sm">11.09.2001</label>

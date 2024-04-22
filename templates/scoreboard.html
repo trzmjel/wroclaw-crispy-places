@@ -57,7 +57,7 @@
     <div class="h-[calc(100%-3rem)] p-1 bg-pattern-stripes">
         <div class="flex flex-row">
             <label class="block text-left w-[calc(100%-0.75rem)] pl-4 text-nowrap overflow-hidden">Wynik</label>
-            <label class="block text-left text-nowrap pl-1 pr-2 w-20">Ranga</label>
+            <label class="block text-right text-nowrap pr-4 w-20">Ranga</label>
         </div>
         <div class="h-[calc(100%-1.25rem)] overflow-y-auto">
             {% for i in range(15) %}
@@ -68,7 +68,7 @@
                 </div>
                 <div class="size-14 overflow-hidden bg-[#bdaaac] rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl flex-none flex items-center mr-1">
                     <div class="size-14 mr-1 mb-1 bg-gradient-to-tr from-[#8d777a] to-[#927b83] rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl flex items-center">
-                        <label class="text-[#e7d1c6] text-center m-auto text-base italic">#1</label>
+                        <label class="text-[#e7d1c6] text-center m-auto text-base italic">#{{ loop.index }}</label>
                     </div>
                 </div>
             </div>

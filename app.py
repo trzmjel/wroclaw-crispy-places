@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, redirect, url_for
 import os, folium
 
 app = Flask(__name__)
@@ -8,7 +8,7 @@ def home():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return "Jesteś zalogowany"
+        return redirect(url_for('map'))
 
 @app.route('/login', methods=['POST'])
 def app_login():

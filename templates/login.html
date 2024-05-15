@@ -7,10 +7,6 @@
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
 <body class="h-screen overflow-hidden text-[#5f4f53] bg-pattern-stripes">
-    {% if session['logged_in'] %}
-    <!-- zrób przekierowanie do map.html; do wyrzucenia ten paragraf poniżej -->
-    <p>Jesteś już zalogowany!</p>
-    {% else %}
     <form class="border-[#d2cec6] border-2 bg-[#fcfaf6] content-center content-round text-center mx-auto mt-36 w-64 h-fit py-4 rounded-lg grid grid-cols-1" action="/login" method="POST">
         <input class="border-[#d2cec6] border text-center w-11/12 mx-auto rounded-lg text-base p-2.5" type="login" name="login" placeholder="login"> <br>
         <input class="border-[#d2cec6] border text-center w-11/12 mx-auto rounded-lg text-base p-2.5" type="password" name="password" placeholder="hasło"> <br>

@@ -5,6 +5,7 @@ Website with interesting places of Wrocław city in Poland
 To run the program, you need:
 - Python 3+
 - Pip
+
 if you want to run it in container:
 - Podman (Docker can be used, but not supported yet)
 

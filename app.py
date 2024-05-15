@@ -17,7 +17,7 @@ def app_login():
         session['logged_in'] = True
     return home()
 
-# Powiąż to z map.html 
+# Powiąż to z map.html
 @app.route("/map")
 def map():
     start_coords = (51.1, 17.03333)

@@ -1,3 +1,5 @@
 # Ignore .venv and venv file (making sure devs won't push them on git)
 venv/
 .venv/
+# Ignore data dir, containing persistante files for MariaDB
+data/

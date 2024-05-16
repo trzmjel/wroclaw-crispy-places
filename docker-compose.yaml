@@ -11,8 +11,24 @@ services:
       - ./aplikacja_turystyczna.sql:/docker-entrypoint-initdb.d/aplikacja_turystyczna.sql:ro
     ports:
       - "3306:3306"
+    networks:
+      - intranet
+
   app:
     image: wroclaw-crispy-places
     restart: always
     ports:
       - "8000:8000"
+    networks:
+      - intranet
+ 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - intranet
+
+networks:
+  intranet:

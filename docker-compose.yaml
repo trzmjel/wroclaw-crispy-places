@@ -1,0 +1,18 @@
+# Use root/example as user/password credentials
+services:
+
+  db:
+    image: docker.io/mariadb:latest
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+    volumes:
+      - ./data:/var/lib/mysql:Z
+      - ./aplikacja_turystyczna.sql:/docker-entrypoint-initdb.d/aplikacja_turystyczna.sql:ro
+    ports:
+      - "3306:3306"
+  app:
+    image: wroclaw-crispy-places
+    restart: always
+    ports:
+      - "8000:8000"

@@ -1,6 +1,19 @@
 from flask import Flask, session, render_template, request, redirect, url_for
 import os, folium
 
+try:
+    conn = mariadb.connect(
+        user="root",
+        password="example",
+        host="db",
+        port=3306,
+        database="aplikacja_turystyczna"
+
+    )
+except mariadb.Error as e:
+    print(f"Error connecting to MariaDB Platform: {e}")
+    sys.exit(1)
+
 app = Flask(__name__)
 
 @app.route("/")

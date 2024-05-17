@@ -3,3 +3,5 @@ venv/
 .venv/
 # Ignore data dir, containing persistante files for MariaDB
 data/
+# Ignore node.js files
+node_modules/

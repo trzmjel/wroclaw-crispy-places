@@ -18,12 +18,12 @@
         </div>
         <div class="flex flex-row overflow-hidden h-16 mb-2 bg-[#fcfaf6] items-center m-1 rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl shadow-lg border-[#d2cec6] border">
             <div class="flex-initial w-[calc(100%-1.25rem)] overflow-hidden text-nowrap">
-                <label class="ml-1 text-xl">Nazwa użyszkodnika</label> <br>
-                <label class="ml-1 block w-36 text-base text-[#FCFAF6] items-center px-2 rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl bg-gradient-to-r from-[#63565b] to-[#948084]">Punkty: 2137</label>
+                <label class="ml-1 text-xl">{{ acc[0] | safe }}</label> <br>
+                <label class="ml-1 block w-36 text-base text-[#FCFAF6] items-center px-2 rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl bg-gradient-to-r from-[#63565b] to-[#948084]">Punkty: {{ acc[1] | safe }}</label>
             </div>
             <div class="size-14 overflow-hidden bg-[#bdaaac] rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl flex-none flex items-center mr-1">
                 <div class="size-14 mr-1 mb-1 bg-gradient-to-tr from-[#8c7377] to-[#927b83] rounded-tl-xl rounded-bl-sm rounded-tr-sm rounded-br-2xl flex items-center">
-                    <p class="text-[#e7d1c6] text-center m-auto text-base italic">#1</p>
+                    <p class="text-[#e7d1c6] text-center m-auto text-base italic">{{ acc[2] | safe }}</p>
                 </div>
             </div>
         </div>
@@ -32,10 +32,8 @@
                 <label class="px-4">Osiągnięcia</label>
                 <div class="h-full mt-2 overflow-y-auto">
                     <div class="flex flex-row justify-center flex-wrap px-1 pb-1 m-1">
-                        {% for i in range(5) %}
-                            <div class="border-[#d2cec6] border size-28 rounded-lg m-1 shadow-lg bg-[#948084] text-[#FCFAF6] text-center">
-                                    Achiev {{ loop.index }}
-                            </div>
+                        {% for a in achievements %}
+                        {% include 'achievement.html' %}
                         {% endfor %}
                     </div>
                 </div>

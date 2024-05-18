@@ -71,8 +71,8 @@ def map():
 def scoreboard():
     cur.execute("""
         SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
-        FROM user_poi p
-        JOIN user u ON u.id = p.user_id
+        FROM user u
+        LEFT JOIN user_poi p ON u.id = p.user_id
         GROUP BY u.id
         ORDER BY points DESC;""")
     rankings = cur.fetchall()
@@ -81,7 +81,22 @@ def scoreboard():
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/profile")
 def profile():
-    return render_template("profile.html")
+    cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
+                FROM user u
+                LEFT JOIN user_poi p ON u.id = p.user_id
+                WHERE u.id = %s
+                GROUP BY u.id""",(session['id'],))
+    acc = cur.fetchone()
+
+    cur.execute("""SELECT description
+FROM user_achievements ua
+JOIN user u
+ON ua.user_id = u.id
+JOIN achievements a
+ON a.id = ua.achievements_id
+WHERE ua.user_id= %s""",(session['id'],))
+    achievements = cur.fetchall()
+    return render_template("profile.html",acc=acc, achievements=achievements)
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/scanner")

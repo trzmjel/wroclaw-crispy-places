@@ -98,13 +98,23 @@ def location(location_id):
         been_here="Tak"
     else:
         been_here="Nie"
+
+    cur.execute("""SELECT description AS comment, nickname
+                    FROM comments
+                    JOIN user_comments_poi
+                    ON comments.id = user_comments_poi.user_id
+                    JOIN user
+                    ON user_comments_poi.user_id = user.id
+                    WHERE user_comments_poi.poi_id = %s""",(location_id,))
+    comments = cur.fetchall()
+
     start_coords = (51.1, 17.03333) # coordy adekwatne do klikniętego markera
     m = folium.Map(location = start_coords, zoom_start = 13)
     m.get_root().width = "100%"
     m.get_root().height = "100%"
     iframe = m.get_root()._repr_html_()
 
-    return render_template('location.html', iframe=iframe, name=loc[1], address=loc[2], percentage=5 ,been_here=been_here)
+    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=5 , been_here=been_here, comments=comments)
 
 @app.route('/logout')
 def logout():

@@ -76,8 +76,6 @@ def scoreboard():
         GROUP BY u.id
         ORDER BY points DESC;""")
     rankings = cur.fetchall()
-    for rank in rankings:
-        print(rank)
     return render_template("scoreboard.html",rankings=rankings)
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji

@@ -5,11 +5,11 @@ import mariadb
 try:
     conn = mariadb.connect(
         user="root",
-password="example",
+        password="example",
         host="127.0.0.1",
         port=3306,
         database="aplikacja_turystyczna",
-        autocommit=True)
+        )
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
 cur = conn.cursor()
@@ -28,7 +28,9 @@ def app_login():
     if session.get('logged_in'):
         return redirect(url_for('map'))
     if 'login' in request.form and 'password' in request.form:
-        cur.execute(f'SELECT * FROM user WHERE login = \'{request.form['login']}\' and password = \'{request.form['password']}\'')
+        login = request.form['login']
+        password = request.form['password']
+        cur.execute('SELECT * FROM user WHERE login = %s and password = %s',(login, password))
         acc = cur.fetchone()
         if acc:
             session['logged_in'] = True
@@ -38,18 +40,18 @@ def app_login():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST' and 'nickname' in request.form and 'login' in request.form and 'password' in request.form:
-        cur.execute(f'SELECT * FROM user WHERE nickname = \'{request.form['nickname']}\' OR login = \'{request.form['login']}\'')
+        nickname = request.form['nickname']
+        login = request.form['login']
+        password = request.form['password']
+        cur.execute(f'SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
         acc = cur.fetchone()
         if acc:
-            print('ACC is present')
             return render_template('register.html')
-        elif not request.form['nickname'] or not request.form['password'] or not request.form['login']:
-            print('MISSING IN FORM')
+        elif not nickname or not login or not password:
             return render_template('register.html')
         else:
-            print("MAKING ACCOUNT")
-            cur.execute(f'INSERT INTO user VALUES (NULL, \'{request.form['nickname']}\', \'{request.form['login']}\', \'{request.form['password']}\')')
-            cur.execute(f'SELECT * FROM user WHERE login=\'{request.form['login']}\'')
+            cur.execute(f'INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
+            cur.execute(f'SELECT * FROM user WHERE login=%s',(login,))
             session['logged_in'] = True
             session['id'] = cur.fetchone()[0]
             return redirect(url_for('map'))
@@ -97,4 +99,4 @@ def logout():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(13)
-    app.run(debug=True,host='0.0.0.0', port=8001, ssl_context='adhoc')
+    app.run(debug=True,host='0.0.0.0', port=8000, ssl_context='adhoc')

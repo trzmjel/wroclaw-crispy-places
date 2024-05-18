@@ -1,19 +1,17 @@
 from flask import Flask, session, render_template, request, redirect, url_for
 import os, folium
+import mariadb
 
 try:
     conn = mariadb.connect(
         user="root",
         password="example",
-        host="db",
+        host="127.0.0.1",
         port=3306,
-        database="aplikacja_turystyczna"
-
-    )
+        database="aplikacja_turystyczna")
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
-    sys.exit(1)
-
+cur = conn.cursor()
 app = Flask(__name__)
 
 @app.route("/")
@@ -26,8 +24,14 @@ def home():
 @app.route('/login', methods=['POST'])
 def app_login():
     # Tymczasowy użytkownik, kiedy będzie możliwość zostanie to połączone z bazą
-    if request.form['login'] == 'admin' and request.form['password'] == 'admin':
-        session['logged_in'] = True
+    if session.get('logged_in'):
+        return redirect(url_for('map'))
+    if 'login' in request.form and 'password' in request.form:
+        cur.execute(f'SELECT * FROM user WHERE login = \'{request.form['login']}\' and password = \'{request.form['password']}\'')
+        acc = cur.fetchone()
+        if acc:
+            session['logged_in'] = True
+            session['id'] = acc[0]
     return home()
 
 # Powiąż to z map.html
@@ -65,6 +69,12 @@ def location():
     iframe = m.get_root()._repr_html_()
     return render_template('location.html', iframe=iframe)
 
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    session.pop('id', None)
+    return home()
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(13)
-    app.run(debug=True,host='0.0.0.0', port=8000, ssl_context='adhoc')
+    app.run(debug=True,host='0.0.0.0', port=8001, ssl_context='adhoc')

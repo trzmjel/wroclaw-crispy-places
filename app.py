@@ -89,14 +89,22 @@ def scanner():
     return render_template("scanner.html")
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
-@app.route("/location")
-def location():
+@app.route("/location/<int:location_id>")
+def location(location_id):
+    cur.execute("SELECT * FROM poi WHERE id = %s",(location_id,))
+    loc = cur.fetchone()
+    cur.execute("SELECT user_id FROM user_poi WHERE user_id = %s",(session["id"],))
+    if not cur.fetchone():
+        been_here="Tak"
+    else:
+        been_here="Nie"
     start_coords = (51.1, 17.03333) # coordy adekwatne do klikniętego markera
     m = folium.Map(location = start_coords, zoom_start = 13)
     m.get_root().width = "100%"
     m.get_root().height = "100%"
     iframe = m.get_root()._repr_html_()
-    return render_template('location.html', iframe=iframe)
+
+    return render_template('location.html', iframe=iframe, name=loc[1], address=loc[2], percentage=5 ,been_here=been_here)
 
 @app.route('/logout')
 def logout():

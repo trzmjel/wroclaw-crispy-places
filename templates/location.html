@@ -17,10 +17,10 @@
         </div>
         <div class="h-[calc(100%-14rem)] pt-2">
             <div class="h-20">
-                <label class="px-2">Nazwa lokalizacji</label> <br>
-                <label class="px-2">Adres (ulica)</label> <br>
-                <label class="px-2">Zdobyło 4,20% graczy</label>
-                <label class="px-2">Zdobyto: Tak</label>
+                <label class="px-2">{{ name | safe }}</label> <br>
+                <label class="px-2">{{ address | safe }}</label> <br>
+                <label class="px-2">Zdobyło {{ percentage | safe }}%</label>
+                <label class="px-2">Zdobyto: {{ been_here | safe}}</label>
             </div>
             <!-- Comments section -->
             <div class="h-dvh pt-2">

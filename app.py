@@ -69,7 +69,16 @@ def map():
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/scoreboard")
 def scoreboard():
-    return render_template("scoreboard.html")
+    cur.execute("""
+        SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
+        FROM user_poi p
+        JOIN user u ON u.id = p.user_id
+        GROUP BY u.id
+        ORDER BY points DESC;""")
+    rankings = cur.fetchall()
+    for rank in rankings:
+        print(rank)
+    return render_template("scoreboard.html",rankings=rankings)
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/profile")

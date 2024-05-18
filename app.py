@@ -5,10 +5,11 @@ import mariadb
 try:
     conn = mariadb.connect(
         user="root",
-        password="example",
+password="example",
         host="127.0.0.1",
         port=3306,
-        database="aplikacja_turystyczna")
+        database="aplikacja_turystyczna",
+        autocommit=True)
 except mariadb.Error as e:
     print(f"Error connecting to MariaDB Platform: {e}")
 cur = conn.cursor()
@@ -34,6 +35,25 @@ def app_login():
             session['id'] = acc[0]
     return home()
 
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    if request.method == 'POST' and 'nickname' in request.form and 'login' in request.form and 'password' in request.form:
+        cur.execute(f'SELECT * FROM user WHERE nickname = \'{request.form['nickname']}\' OR login = \'{request.form['login']}\'')
+        acc = cur.fetchone()
+        if acc:
+            print('ACC is present')
+            return render_template('register.html')
+        elif not request.form['nickname'] or not request.form['password'] or not request.form['login']:
+            print('MISSING IN FORM')
+            return render_template('register.html')
+        else:
+            print("MAKING ACCOUNT")
+            cur.execute(f'INSERT INTO user VALUES (NULL, \'{request.form['nickname']}\', \'{request.form['login']}\', \'{request.form['password']}\')')
+            cur.execute(f'SELECT * FROM user WHERE login=\'{request.form['login']}\'')
+            session['logged_in'] = True
+            session['id'] = cur.fetchone()[0]
+            return redirect(url_for('map'))
+    return render_template('register.html')
 # Powiąż to z map.html
 @app.route("/map")
 def map():

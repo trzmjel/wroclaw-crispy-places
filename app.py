@@ -81,7 +81,6 @@ def map():
                 JOIN user_poi u on p.id = u.poi_id
                 WHERE u.user_id = %s""",(session['id'],))
     loc = cur.fetchall()
-    print(loc)
     start_coords = (51.1, 17.03333)
     m = folium.Map(location = start_coords, zoom_start = 13)
     for l in loc:
@@ -137,6 +136,9 @@ def scanner():
 @app.route("/location/<int:location_id>", methods=['POST','GET'])
 @login_required
 def location(location_id):
+    cur.execute("SELECT * FROM user_poi WHERE user_id = %s AND poi_id = %s",(session['id'],location_id))
+    if not cur.fetchone():
+        return redirect(url_for('map'))
     if request.method == "POST" and 'comment' in request.form:
         cur.execute('INSERT INTO comments VALUES (NULL, %s)', (request.form['comment'],))
         cur.execute('SELECT MAX(id) FROM comments')

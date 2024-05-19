@@ -144,6 +144,12 @@ def location(location_id):
                     WHERE user_comments_poi.poi_id = %s""",(location_id,))
     comments = cur.fetchall()
 
+    cur.execute("""SELECT (v.users_visited * 100.0 / u.users_all) AS percent
+                FROM
+                    (SELECT COUNT(id) AS users_all FROM user) AS u,
+                    (SELECT COUNT(user_id) AS users_visited FROM user_poi WHERE poi_id=%s) AS v;""",(location_id,))
+    percentage = cur.fetchone()[0]
+
     start_coords = (loc[4], loc[5]) # coordy adekwatne do klikniętego markera
     m = folium.Map(location = start_coords, zoom_start = 18)
     folium.Marker(location=[loc[4],loc[5]],popup=loc[1]).add_to(m)
@@ -151,7 +157,7 @@ def location(location_id):
     m.get_root().height = "100%"
     iframe = m.get_root()._repr_html_()
 
-    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=5 , been_here=been_here, comments=comments, location_id=location_id, nickname=nickname)
+    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=percentage , been_here=been_here, comments=comments, location_id=location_id, nickname=nickname)
 
 @app.route('/logout')
 def logout():

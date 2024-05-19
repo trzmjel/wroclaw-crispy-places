@@ -1,17 +1,23 @@
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 import os, folium
 import mariadb
+from time import sleep
 
-try:
-    conn = mariadb.connect(
-        user="root",
-        password="example",
-        host="127.0.0.1",
-        port=3306,
-        database="aplikacja_turystyczna",
+while True:
+    try:
+        conn = mariadb.connect(
+            user="root",
+            password="example",
+            host="127.0.0.1",
+            port=3306,
+            database="aplikacja_turystyczna",
+            autocommit=True
         )
-except mariadb.Error as e:
-    print(f"Error connecting to MariaDB Platform: {e}")
+        break
+    except mariadb.Error as e:
+        print(f"Error connecting to MariaDB Platform: {e}")
+        sleep(3)
+
 cur = conn.cursor()
 app = Flask(__name__)
 
@@ -22,6 +28,10 @@ def home():
     else:
         return redirect(url_for('map'))
 
+@app.route('/baza_kurwa')
+def kurwaa():
+    cur.execute("SELECT * FROM comments")
+    return(jsonify(cur.fetchall()))
 @app.route('/login', methods=['POST'])
 def app_login():
     # Tymczasowy użytkownik, kiedy będzie możliwość zostanie to połączone z bazą
@@ -104,8 +114,14 @@ def scanner():
     return render_template("scanner.html")
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
-@app.route("/location/<int:location_id>")
+@app.route("/location/<int:location_id>", methods=['POST','GET'])
 def location(location_id):
+    if request.method == "POST" and 'comment' in request.form:
+        cur.execute('INSERT INTO comments VALUES (NULL, %s)', (request.form['comment'],))
+        cur.execute('SELECT MAX(id) FROM comments')
+        latest_id = cur.fetchone()[0]
+        cur.execute('INSERT INTO user_comments_poi VALUES (%s, %s, %s);', (session['id'], location_id, latest_id))
+        return redirect(url_for('location', location_id=location_id))
     cur.execute("SELECT * FROM poi WHERE id = %s",(location_id,))
     loc = cur.fetchone()
     cur.execute("SELECT user_id FROM user_poi WHERE user_id = %s",(session["id"],))
@@ -117,7 +133,7 @@ def location(location_id):
     cur.execute("""SELECT description AS comment, nickname
                     FROM comments
                     JOIN user_comments_poi
-                    ON comments.id = user_comments_poi.user_id
+                    ON comments.id = user_comments_poi.comments_id
                     JOIN user
                     ON user_comments_poi.user_id = user.id
                     WHERE user_comments_poi.poi_id = %s""",(location_id,))
@@ -129,7 +145,7 @@ def location(location_id):
     m.get_root().height = "100%"
     iframe = m.get_root()._repr_html_()
 
-    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=5 , been_here=been_here, comments=comments)
+    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=5 , been_here=been_here, comments=comments, location_id=location_id)
 
 @app.route('/logout')
 def logout():
@@ -139,4 +155,4 @@ def logout():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(13)
-    app.run(debug=True,host='0.0.0.0', port=8000, ssl_context='adhoc')
+    app.run(debug=True,host='0.0.0.0', port=8001, ssl_context='adhoc')

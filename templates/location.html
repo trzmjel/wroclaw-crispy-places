@@ -31,20 +31,21 @@
                             <div class="flex flex-row overflow-hidden border-b-2 border-[#d2cec6]">
                                 <label class="block text-left w-[calc(100%-0.75rem)] px-1 text-sm text-nowrap overflow-hidden">Nazwa użyszkodnika</label>
                             </div>
+                            <form action="/location/{{ location_id | safe }}" method="POST">
                             <div class="flex py-1">
-                                <span contenteditable="true" class="border border-[#d2cec6] rounded-lg focus:outline-none px-1 w-[calc(100%-0.5rem)] text-wrap flex-grow min-h-20"></span>
+                                <input type = "text" name="comment" contenteditable="true" class="border border-[#d2cec6] rounded-lg focus:outline-none px-1 w-[calc(100%-0.5rem)] text-wrap flex-grow min-h-20"></span>
                             </div>
                             <div class="flex flex-row overflow-hidden">
                                 <label class="block text-sm pl-1 p-0.5">500/500</label>
                                 <input class="block ml-auto border-[#d2cec6] border text-[#FCFAF6] bg-[#948084] p-0.5 text-sm rounded-lg" type="submit" value="Opublikuj">
                             </div>
+                            </form>
                         </div>
                         {% for c in comments %}
                             {% with comment=c[0], nickname=c[1] %}
                                 {% include 'comment.html' %}
                             {% endwith %}
                         {% endfor %} 
-                        <!-- Place for comments -->
                     </div>
                 </div>
             </div>

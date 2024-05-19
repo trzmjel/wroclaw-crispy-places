@@ -14,13 +14,13 @@ services:
     networks:
       - intranet
 
-  app:
-    image: wroclaw-crispy-places
-    restart: always
-    ports:
-      - "8000:8000"
-    networks:
-      - intranet
+      #app:
+      #image: wroclaw-crispy-places
+      #restart: always
+      #ports:
+      #- "8000:8000"
+      #networks:
+      #- intranet
  
   adminer:
     image: adminer

@@ -39,7 +39,6 @@ def home():
 
 @app.route('/login', methods=['POST','GET'])
 def app_login():
-    # Tymczasowy użytkownik, kiedy będzie możliwość zostanie to połączone z bazą
     if request.method == 'GET':
         return render_template('login.html')
     if session.get('logged_in'):
@@ -73,7 +72,7 @@ def register():
             session['id'] = cur.fetchone()[0]
             return redirect(url_for('map'))
     return render_template('register.html')
-# Powiąż to z map.html
+
 @app.route("/map")
 @login_required
 def map():
@@ -88,7 +87,6 @@ def map():
     iframe = m.get_root()._repr_html_()
     return render_template('map.html', iframe=iframe)
 
-# szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/scoreboard")
 @login_required
 def scoreboard():
@@ -101,7 +99,6 @@ def scoreboard():
     rankings = cur.fetchall()
     return render_template("scoreboard.html",rankings=rankings)
 
-# szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/profile")
 @login_required
 def profile():
@@ -122,7 +119,6 @@ WHERE ua.user_id= %s""",(session['id'],))
     achievements = cur.fetchall()
     return render_template("profile.html",acc=acc, achievements=achievements)
 
-# szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/scanner", methods=['POST', 'GET'])
 @login_required
 def scanner():
@@ -134,7 +130,6 @@ def scanner():
             return redirect(url_for('map'))
     return render_template("scanner.html")
 
-# szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/location/<int:location_id>", methods=['POST','GET'])
 @login_required
 def location(location_id):
@@ -172,7 +167,7 @@ def location(location_id):
                     (SELECT COUNT(user_id) AS users_visited FROM user_poi WHERE poi_id=%s) AS v;""",(location_id,))
     percentage = cur.fetchone()[0]
 
-    start_coords = (loc[4], loc[5]) # coordy adekwatne do klikniętego markera
+    start_coords = (loc[4], loc[5])
     m = folium.Map(location = start_coords, zoom_start = 18)
     folium.Marker(location=[loc[4],loc[5]],popup=loc[1]).add_to(m)
     m.get_root().width = "100%"

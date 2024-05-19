@@ -59,15 +59,15 @@ def register():
         nickname = request.form['nickname']
         login = request.form['login']
         password = request.form['password']
-        cur.execute(f'SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
+        cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
         acc = cur.fetchone()
         if acc:
             return render_template('register.html')
         elif not nickname or not login or not password:
             return render_template('register.html')
         else:
-            cur.execute(f'INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
-            cur.execute(f'SELECT * FROM user WHERE login=%s',(login,))
+            cur.execute('INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
+            cur.execute('SELECT * FROM user WHERE login=%s',(login,))
             session['logged_in'] = True
             session['id'] = cur.fetchone()[0]
             return redirect(url_for('map'))
@@ -93,12 +93,11 @@ def map():
 @app.route("/scoreboard")
 @login_required
 def scoreboard():
-    cur.execute("""
-        SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
-        FROM user u
-        LEFT JOIN user_poi p ON u.id = p.user_id
-        GROUP BY u.id
-        ORDER BY points DESC;""")
+    cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
+                FROM user u
+                LEFT JOIN user_poi p ON u.id = p.user_id
+                GROUP BY u.id
+                ORDER BY points DESC;""")
     rankings = cur.fetchall()
     return render_template("scoreboard.html",rankings=rankings)
 
@@ -113,12 +112,12 @@ def profile():
     acc = cur.fetchone()
 
     cur.execute("""SELECT description
-FROM user_achievements ua
-JOIN user u
-ON ua.user_id = u.id
-JOIN achievements a
-ON a.id = ua.achievements_id
-WHERE ua.user_id= %s""",(session['id'],))
+                FROM user_achievements ua
+                JOIN user u
+                ON ua.user_id = u.id
+                JOIN achievements a
+                ON a.id = ua.achievements_id
+                WHERE ua.user_id= %s""",(session['id'],))
     achievements = cur.fetchall()
     return render_template("profile.html",acc=acc, achievements=achievements)
 

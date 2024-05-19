@@ -7,8 +7,6 @@
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
 <body class="h-screen text-[#5f4f53]">
-    <!-- Panel -->
-    {% include 'nav_panel.html' %}
     <!-- Content -->
     <div class="p-1 bg-pattern-stripes">
         <!-- Map with specific location info -->
@@ -29,7 +27,7 @@
                     <div class="h-[calc(100%-1.5rem)] overflow-y-auto">
                         <div class="p-1 bg-[#fcfaf6] border border-[#d2cec6] rounded-lg shadow-lg">
                             <div class="flex flex-row overflow-hidden border-b-2 border-[#d2cec6]">
-                                <label class="block text-left w-[calc(100%-0.75rem)] px-1 text-sm text-nowrap overflow-hidden">Nazwa użyszkodnika</label>
+                                <label class="block text-left w-[calc(100%-0.75rem)] px-1 text-sm text-nowrap overflow-hidden">{{ nickname | safe }}</label>
                             </div>
                             <form action="/location/{{ location_id | safe }}" method="POST">
                             <div class="flex py-1">

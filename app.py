@@ -145,7 +145,7 @@ def location(location_id):
     comments = cur.fetchall()
 
     start_coords = (loc[4], loc[5]) # coordy adekwatne do klikniętego markera
-    m = folium.Map(location = start_coords, zoom_start = 13)
+    m = folium.Map(location = start_coords, zoom_start = 18)
     folium.Marker(location=[loc[4],loc[5]],popup=loc[1]).add_to(m)
     m.get_root().width = "100%"
     m.get_root().height = "100%"

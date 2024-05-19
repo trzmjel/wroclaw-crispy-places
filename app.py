@@ -2,6 +2,7 @@ from flask import Flask, session, render_template, request, redirect, url_for, j
 import os, folium
 import mariadb
 from time import sleep
+from functools import wraps
 
 while True:
     try:
@@ -21,16 +22,26 @@ while True:
 cur = conn.cursor()
 app = Flask(__name__)
 
+def login_required(func):
+    @wraps(func)
+    def secure_function(*args,**kwargs):
+        if 'id' not in session and 'logged_in' not in session:
+            return redirect(url_for('app_login'))
+        return func(*args, **kwargs)
+    return secure_function
+
 @app.route("/")
 def home():
     if not session.get('logged_in'):
-        return render_template('login.html')
+        return redirect(url_for('app_login'))
     else:
         return redirect(url_for('map'))
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST','GET'])
 def app_login():
     # Tymczasowy użytkownik, kiedy będzie możliwość zostanie to połączone z bazą
+    if request.method == 'GET':
+        return render_template('login.html')
     if session.get('logged_in'):
         return redirect(url_for('map'))
     if 'login' in request.form and 'password' in request.form:
@@ -64,6 +75,7 @@ def register():
     return render_template('register.html')
 # Powiąż to z map.html
 @app.route("/map")
+@login_required
 def map():
     cur.execute("SELECT id, name, latitude, longitude FROM poi;")
     loc = cur.fetchall()
@@ -78,6 +90,7 @@ def map():
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/scoreboard")
+@login_required
 def scoreboard():
     cur.execute("""
         SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
@@ -90,6 +103,7 @@ def scoreboard():
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/profile")
+@login_required
 def profile():
     cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
                 FROM user u
@@ -110,17 +124,19 @@ WHERE ua.user_id= %s""",(session['id'],))
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/scanner", methods=['POST', 'GET'])
+@login_required
 def scanner():
     if request.method == 'POST' and 'qr_code' in request.form:
         cur.execute('SELECT id FROM poi WHERE name = %s',(request.form['qr_code'],))
         loc = cur.fetchone()
         if loc:
-            cur.execute('INSERT INTO user_poi VALUES(%s,%s);',(loc[0],session['id']))
+            cur.execute('INSERT IGNORE INTO user_poi VALUES(%s,%s);',(loc[0],session['id']))
             return redirect(url_for('map'))
     return render_template("scanner.html")
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
 @app.route("/location/<int:location_id>", methods=['POST','GET'])
+@login_required
 def location(location_id):
     if request.method == "POST" and 'comment' in request.form:
         cur.execute('INSERT INTO comments VALUES (NULL, %s)', (request.form['comment'],))
@@ -166,6 +182,7 @@ def location(location_id):
     return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=percentage , been_here=been_here, comments=comments, location_id=location_id, nickname=nickname)
 
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('logged_in', None)
     session.pop('id', None)

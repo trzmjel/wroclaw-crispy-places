@@ -76,8 +76,12 @@ def register():
 @app.route("/map")
 @login_required
 def map():
-    cur.execute("SELECT id, name, latitude, longitude FROM poi;")
+    cur.execute("""SELECT p.id, p.name, p.latitude, p.longitude
+                FROM poi p
+                JOIN user_poi u on p.id = u.poi_id
+                WHERE u.user_id = %s""",(session['id'],))
     loc = cur.fetchall()
+    print(loc)
     start_coords = (51.1, 17.03333)
     m = folium.Map(location = start_coords, zoom_start = 13)
     for l in loc:

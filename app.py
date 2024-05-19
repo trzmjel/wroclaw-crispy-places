@@ -109,8 +109,14 @@ WHERE ua.user_id= %s""",(session['id'],))
     return render_template("profile.html",acc=acc, achievements=achievements)
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji
-@app.route("/scanner")
+@app.route("/scanner", methods=['POST', 'GET'])
 def scanner():
+    if request.method == 'POST' and 'qr_code' in request.form:
+        cur.execute('SELECT id FROM poi WHERE name = %s',(request.form['qr_code'],))
+        loc = cur.fetchone()
+        if loc:
+            cur.execute('INSERT INTO user_poi VALUES(%s,%s);',(loc[0],session['id']))
+            return redirect(url_for('map'))
     return render_template("scanner.html")
 
 # szybkie podpięcie po możliwość podglądu strony; do edycji

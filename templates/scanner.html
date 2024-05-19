@@ -12,7 +12,11 @@
     <!-- Content -->
     <div class="h-[calc(100%-3rem)] p-1 bg-pattern-stripes">
         <div class="h-full rounded-lg border border-[#d2cec6]">
-            <!-- Tu się wrzuci opencv -->
+            Tutaj należy wstawić zawartość kodu QR (zaleca się zeskanowanie aplikacją, jednak można przepisać go ręcznie) odwiedzonego miejsca, aby uzyskać dostęp do tej lokalizacji w aplikacji:
+            <form action="/scanner" method="POST">
+                <input type="text" name="qr_code">
+                <input type="submit" value="Wyślij kod">
+            </form>
         </div>
     </div>    
 </body>

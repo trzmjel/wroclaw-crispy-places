@@ -28,10 +28,6 @@ def home():
     else:
         return redirect(url_for('map'))
 
-@app.route('/baza_kurwa')
-def kurwaa():
-    cur.execute("SELECT * FROM comments")
-    return(jsonify(cur.fetchall()))
 @app.route('/login', methods=['POST'])
 def app_login():
     # Tymczasowy użytkownik, kiedy będzie możliwość zostanie to połączone z bazą
@@ -69,8 +65,12 @@ def register():
 # Powiąż to z map.html
 @app.route("/map")
 def map():
+    cur.execute("SELECT id, name, latitude, longitude FROM poi;")
+    loc = cur.fetchall()
     start_coords = (51.1, 17.03333)
     m = folium.Map(location = start_coords, zoom_start = 13)
+    for l in loc:
+        folium.Marker(location=[l[2],l[3]], popup = f'<a href=/location/{l[0]}>{l[1]}</a>').add_to(m)
     m.get_root().width = "100%"
     m.get_root().height = "100%"
     iframe = m.get_root()._repr_html_()
@@ -122,13 +122,18 @@ def location(location_id):
         latest_id = cur.fetchone()[0]
         cur.execute('INSERT INTO user_comments_poi VALUES (%s, %s, %s);', (session['id'], location_id, latest_id))
         return redirect(url_for('location', location_id=location_id))
+
     cur.execute("SELECT * FROM poi WHERE id = %s",(location_id,))
     loc = cur.fetchone()
+
     cur.execute("SELECT user_id FROM user_poi WHERE user_id = %s",(session["id"],))
     if not cur.fetchone():
         been_here="Tak"
     else:
         been_here="Nie"
+
+    cur.execute("SELECT nickname FROM user WHERE id = %s",(session["id"],))
+    nickname = cur.fetchone()[0]
 
     cur.execute("""SELECT description AS comment, nickname
                     FROM comments
@@ -139,13 +144,14 @@ def location(location_id):
                     WHERE user_comments_poi.poi_id = %s""",(location_id,))
     comments = cur.fetchall()
 
-    start_coords = (51.1, 17.03333) # coordy adekwatne do klikniętego markera
+    start_coords = (loc[4], loc[5]) # coordy adekwatne do klikniętego markera
     m = folium.Map(location = start_coords, zoom_start = 13)
+    folium.Marker(location=[loc[4],loc[5]],popup=loc[1]).add_to(m)
     m.get_root().width = "100%"
     m.get_root().height = "100%"
     iframe = m.get_root()._repr_html_()
 
-    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=5 , been_here=been_here, comments=comments, location_id=location_id)
+    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=5 , been_here=been_here, comments=comments, location_id=location_id, nickname=nickname)
 
 @app.route('/logout')
 def logout():

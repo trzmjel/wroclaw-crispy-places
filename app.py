@@ -150,7 +150,7 @@ def location(location_id):
     loc = cur.fetchone()
 
     cur.execute("SELECT user_id FROM user_poi WHERE user_id = %s",(session["id"],))
-    if not cur.fetchone():
+    if cur.fetchone():
         been_here="Tak"
     else:
         been_here="Nie"

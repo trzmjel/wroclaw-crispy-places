@@ -45,12 +45,12 @@ CREATE TABLE `poi` (
   `name` varchar(30) NOT NULL,
   `address` varchar(60) NOT NULL,
   `description` text NOT NULL,
-  `longitude` decimal(7,5) NOT NULL,
   `latitude` decimal(7,5) NOT NULL,
+  `longitude` decimal(7,5) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `poi` (`id`, `name`, `address`, `description`, `longitude`, `latitude`) VALUES
+INSERT INTO `poi` (`id`, `name`, `address`, `description`, `latitude`, `longitude`) VALUES
 (1,	'Panorama Racławicka',	'Jana Ewangelisty Purkyniego 11, 50-155',	'Muzeum sztuki we Wrocławiu, oddział Muzeum Narodowego we Wrocławiu, założone w 1893 we Lwowie, od 1980 we Wrocławiu; eksponuje cykloramiczny obraz \"Bitwa pod Racławicami\" namalowany w latach 1893–1894 przez zespół malarzy pod kierunkiem Jana Styki i Wojciecha Kossaka. Obraz olejny przedstawia bitwę pod Racławicami (1794), jeden z epizodów insurekcji kościuszkowskiej, zwycięstwo wojsk polskich pod dowództwem gen. Tadeusza Kościuszki nad wojskami rosyjskimi',	51.11019,	17.04443),
 (2,	'ZOO Wrocław',	'Zygmunta Wróblewskiego 1-5, 51-618',	'Ogród zoologiczny otwarty po raz pierwszy 10 lipca 1865. Jest najstarszym na obecnych ziemiach polskich ogrodem zoologicznym w Polsce. Powierzchnia ogrodu to 33 hektary. Pod koniec 2015 Ogród Zoologiczny we Wrocławiu prezentował ponad 10 500 zwierząt (nie wliczając bezkręgowców) z 1132 gatunków (trzecie pod tym względem zoo na świecie). Jest piątym najchętniej odwiedzanym ogrodem zoologicznym w Europie z dziennym rekordem wejść wynoszącym 28 300 osób',	51.10579,	17.07621),
 (3,	'Ogród Japoński',	'Adama Mickiewicza 1, 51-618',	'Założony w latach 1909–1913 wokół dawnego stawu Ludwiga Theodora Moritza-Eichborna w obrębie obecnego Parku Szczytnickiego. W 1995 r. opracowano projekt renowacji ogrodu pod kierunkiem prof. Ikui Nishikawy z Tokio. Następnie w latach 1996–1997, przy współpracy ambasady Japonii oraz ogrodników z Wrocławia i Nagoi, przeprowadzono prace przywracające ogrodowi japoński charakter. Pracami kierował Yoshiki Takamura. Dwa miesiące po uroczystym otwarciu, w lipcu 1997 podczas powodzi stulecia, ogród znajdował się przez trzy tygodnie pod wodą. Zniszczenia były tak duże, że konieczna stała się kolejna renowacja. Przepadło około 70% nowo nasadzonych roślin. Ponowne otwarcie nastąpiło w październiku 1999 r.',	51.10971,	17.07894),
@@ -71,6 +71,8 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `user` (`id`, `nickname`, `login`, `password`) VALUES
+(1,	'test',	'test',	'test');
 
 DROP TABLE IF EXISTS `user_achievements`;
 CREATE TABLE `user_achievements` (
@@ -107,5 +109,7 @@ CREATE TABLE `user_poi` (
   CONSTRAINT `user_user-poi` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `user_poi` (`poi_id`, `user_id`) VALUES
+(2,	1);
 
--- 2024-05-20 13:08:49
+-- 2024-05-20 13:11:58

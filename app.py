@@ -1,6 +1,6 @@
 from flask import Flask, session, render_template, request, redirect, url_for, jsonify
-import os, folium
-import mariadb
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
+import os, folium, mariadb
 from time import sleep
 from functools import wraps
 
@@ -194,12 +194,11 @@ def api_signin():
     data = request.json
     login = data.get('login')
     password = data.get('password')
-    cur.execute('SELECT * FROM user WHERE login = %s and password = %s',(login, password))
+    cur.execute('SELECT id FROM user WHERE login = %s and password = %s',(login, password))
     acc = cur.fetchone()
     if acc:
-        session['logged_in'] = True
-        session['id'] = acc[0]
-        return jsonify({'message': 'Logged in','session': session.get('session_id')}),200
+        access_token = create_access_token(identity = acc[0])
+        return jsonify({'message': 'Logged in','session': access_token}),200
     else: return jsonify({'message': 'Wrong password'}),401
 
     return jsonify({'message': 'Missing login or password'}),400
@@ -222,10 +221,14 @@ def api_signup():
 
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
-    session.pop('logged_in', None)
-    session.pop('id',None)
-    return jsonify({'message': 'Logged out'})
+
+    return jsonify({'message': 'Logged out'}),200
 
 if __name__ == "__main__":
-    app.secret_key = os.urandom(13)
+    app.config['SECRET_KEY'] = os.urandom(13)
+    app.config['JWT_SECRET_KEY']= app.config['SECRET_KEY']
+    app.config['JWT_TOKEN_LOCATION'] = ['headers']
+
+    jwt = JWTManager(app)
+
     app.run(debug=True,host='0.0.0.0', port=8001, ssl_context='adhoc')

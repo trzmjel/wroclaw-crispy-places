@@ -131,6 +131,7 @@ def scanner():
             cur.execute('SELECT * FROM user_poi WHERE poi_id = %s AND user_id = %s',(loc[0],session['id']))
             if not cur.fetchone():
                 cur.execute('INSERT INTO user_poi VALUES(%s,%s);',(loc[0],session['id']))
+                cur.execute('INSERT INTO user_achievements VALUES(%s,%s)',(session['id'],loc[0]))
             return redirect(url_for('map'))
     return render_template("scanner.html")
 

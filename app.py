@@ -128,7 +128,9 @@ def scanner():
         cur.execute('SELECT id FROM poi WHERE name = %s',(request.form['qr_code'],))
         loc = cur.fetchone()
         if loc:
-            cur.execute('INSERT IGNORE INTO user_poi VALUES(%s,%s);',(loc[0],session['id']))
+            cur.execute('SELECT * FROM user_poi WHERE poi_id = %s AND user_id = %s',(loc[0],session['id']))
+            if not cur.fetchone():
+                cur.execute('INSERT INTO user_poi VALUES(%s,%s);',(loc[0],session['id']))
             return redirect(url_for('map'))
     return render_template("scanner.html")
 

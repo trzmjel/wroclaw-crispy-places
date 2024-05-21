@@ -201,6 +201,30 @@ def logout():
 #REST api
 @app.route('/api/signin', methods=['POST'])
 def api_signin():
+    """
+    Login to service
+    ---
+    tags:
+      - Authentication
+    parameters:
+    - in: query
+      name: login
+      type: string
+      required: true
+    - in: query
+      name: password
+      type: string
+      required: true
+    responses:
+        200:
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+        401:
+            description: Invalid credentials
+    """
     login = request.args.get('login')
     password = request.args.get('password')
     if not login or not password:
@@ -216,15 +240,41 @@ def api_signin():
 
 @app.route('/api/signup', methods=['POST'])
 def api_signup():
+    """
+    Register to service
+    ---
+    tags:
+      - Authentication
+    parameters:
+      - in: query
+        name: login
+        type: string
+        required: true
+      - in: query
+        name: nickname
+        type: string
+        required: true
+      - in: query
+        name: password
+        type: string
+        required: true
+    responses:
+        200:
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+    """
     nickname = request.args.get('nickname')
     login = request.args.get('login')
     password = request.args.get('password')
     if not password:
-        return jsonify({'message': 'Missing password'})
+        return jsonify({'message': 'Missing password'}), 400
     elif not login:
-        return jsonify({'message': 'Missing login'})
+        return jsonify({'message': 'Missing login'}), 400
     elif not nickname:
-        return jsonify({'message': 'Missing nickname'})
+        return jsonify({'message': 'Missing nickname'}), 400
     cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
     acc = cur.fetchone()
     if acc:
@@ -236,6 +286,20 @@ def api_signup():
 
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
+    """
+    Logout from service
+    ---
+    tags:
+      - Authentication
+    responses:
+        200:
+            description: Logged out
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+    """
     session.pop('logged_in', None)
     session.pop('id', None)
     return jsonify({'message': 'Logged out'}),200

@@ -434,6 +434,7 @@ def api_profile():
     """
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
+
     cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
                 FROM user u
                 LEFT JOIN user_poi p ON u.id = p.user_id
@@ -449,7 +450,7 @@ def api_profile():
                 ON a.id = ua.achievements_id
                 WHERE ua.user_id= %s""",(session['id'],))
     achievements = cur.fetchall()
-    return jsonify({'account': acc, 'achievements': achievements}),
+    return jsonify({'account': acc, 'achievements': achievements}), 200
 
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)

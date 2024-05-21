@@ -201,11 +201,10 @@ def logout():
 #REST api
 @app.route('/api/signin', methods=['POST'])
 def api_signin():
-    try:
-        login = request.form['login']
-        password = request.form['password']
-    except:
-        return jsonify({'message': "Missing data"})
+    login = request.args.get('login')
+    password = request.args.get('password')
+    if not login or not password:
+        return jsonify({'message': 'Invalid credentials'}), 401
 
     cur.execute('SELECT id FROM user WHERE login = %s and password = %s',(login, password))
     acc = cur.fetchone()
@@ -213,27 +212,26 @@ def api_signin():
         session['id']=acc[0]
         session['logged_in']=True
         return jsonify({'message': 'Logged in'}), 200
-    return jsonify({'message': 'Wrong password'}), 401
+    return jsonify({'message': 'Invalid credentials'}), 401
 
 @app.route('/api/signup', methods=['POST'])
 def api_signup():
-    try:
-        nickname = request.form['nickname']
-        login = request.form['login']
-        password = request.form['password']
-
-    except:
-        return jsonify({'message': 'Missing data'}), 400
-
-    if 'nickname' in request.form and 'login' in request.form and 'password' in request.form:
-        cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
-        acc = cur.fetchone()
-        if acc:
-            return jsonify({'message': 'User exists'}), 400
-            return jsonify({'message': 'Missing data'}), 400
-        else:
-            cur.execute('INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
-            return jsonify({'message': 'User created'}), 200
+    nickname = request.args.get('nickname')
+    login = request.args.get('login')
+    password = request.args.get('password')
+    if not password:
+        return jsonify({'message': 'Missing password'})
+    elif not login:
+        return jsonify({'message': 'Missing login'})
+    elif not nickname:
+        return jsonify({'message': 'Missing nickname'})
+    cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
+    acc = cur.fetchone()
+    if acc:
+        return jsonify({'message': 'User exists'}), 400
+    else:
+        cur.execute('INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
+        return jsonify({'message': 'User created'}), 200
 
 
 @app.route('/api/logout', methods=['POST'])
@@ -246,15 +244,18 @@ def api_logout():
 def api_location():
     if not 'logged_in' in session:
         return jsonify({'message': "Unauthorized"}), 401
-    try:
-        location_id = request.form['location_id']
-    except:
+    location_id = request.args.get('location_id')
+    if not location_id:
         return jsonify({'message': 'Missing location_id'}), 400
 
+    cur.execute("SELECT * FROM user_poi WHERE user_id = %s AND poi_id = %s",(session['id'],location_id))
+    loc = cur.fetchone();
+    if not loc:
+        return jsonify({'message': 'Unauthorized'}), 401
+
     if request.method == "POST":
-        try:
-            comment = request.form['comment']
-        except:
+        comment = request.args.get('comment')
+        if not comment:
             return jsonify({'message': 'Missing comment'}), 400
 
         cur.execute('INSERT INTO comments VALUES (NULL, %s)', (comment,))
@@ -262,11 +263,6 @@ def api_location():
         latest_id = cur.fetchone()[0]
         cur.execute('INSERT INTO user_comments_poi VALUES (%s, %s, %s);', (session['id'], location_id, latest_id))
         return jsonify({'message': 'Comment succesfuly posted'}), 200
-
-    cur.execute("SELECT * FROM user_poi WHERE user_id = %s AND poi_id = %s",(session['id'],location_id))
-    loc = cur.fetchone();
-    if not loc:
-        return jsonify({'message': 'Unauthorized'}), 401
 
     cur.execute("SELECT * FROM poi WHERE id = %s",(location_id,))
     loc = cur.fetchone()
@@ -312,9 +308,8 @@ def api_scoreboard():
 def api_scanner():
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
-    try:
-        qr_code = request.form['qr_code']
-    except:
+    qr_code = request.args.get('qr_code')
+    if not qr_code:
         return jsonify({'message': 'Missing qr_code'}), 400
     cur.execute('SELECT id FROM poi WHERE name = %s',(qr_code,))
     loc = cur.fetchone()

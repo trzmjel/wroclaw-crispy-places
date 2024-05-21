@@ -212,8 +212,8 @@ def api_signin():
     if acc:
         session['id']=acc[0]
         session['logged_in']=True
-        return jsonify({'message': 'Logged in'}),200
-    return jsonify({'message': 'Wrong password'}),401
+        return jsonify({'message': 'Logged in'}), 200
+    return jsonify({'message': 'Wrong password'}), 401
 
 @app.route('/api/signup', methods=['POST'])
 def api_signup():
@@ -242,7 +242,48 @@ def api_logout():
     session.pop('id', None)
     return jsonify({'message': 'Logged out'}),200
 
+@app.route('/api/location' , methods=['GET'])
+def api_location():
+    if not 'logged_in' in session:
+        return jsonify({'message': "Unauthorized"}), 401
+    try:
+        location_id = request.form['location_id']
+    except:
+        return jsonify({'message': 'Missing location_id'}), 400
+
+    cur.execute("SELECT * FROM user_poi WHERE user_id = %s AND poi_id = %s",(session['id'],location_id))
+    loc = cur.fetchone();
+    if not loc:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    cur.execute("SELECT * FROM poi WHERE id = %s",(location_id,))
+    loc = cur.fetchone()
+
+    cur.execute("SELECT user_id FROM user_poi WHERE user_id = %s",(session["id"],))
+    if cur.fetchone():
+        been_here="Tak"
+    else:
+        been_here="Nie"
+
+    cur.execute("SELECT nickname FROM user WHERE id = %s",(session["id"],))
+    nickname = cur.fetchone()[0]
+
+    cur.execute("""SELECT description AS comment, nickname
+                    FROM comments
+                    JOIN user_comments_poi
+                    ON comments.id = user_comments_poi.comments_id
+                    JOIN user
+                    ON user_comments_poi.user_id = user.id
+                    WHERE user_comments_poi.poi_id = %s""",(location_id,))
+    comments = cur.fetchall()
+
+    cur.execute("""SELECT (v.users_visited * 100.0 / u.users_all) AS percent
+                FROM
+                    (SELECT COUNT(id) AS users_all FROM user) AS u,
+                    (SELECT COUNT(user_id) AS users_visited FROM user_poi WHERE poi_id=%s) AS v;""",(location_id,))
+    percentage = cur.fetchone()[0]
+    return jsonify({'name':loc[1], 'address':loc[2], 'percentage':percentage, 'been_here':been_here, 'comments':comments})
+
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)
-
     app.run(debug=True,host='0.0.0.0', port=8001)

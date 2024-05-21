@@ -1,6 +1,6 @@
 from flask import Flask, session, render_template, request, redirect, url_for, jsonify
-import os, folium
-import mariadb
+from flasgger import Swagger
+import os, folium, mariadb
 from time import sleep
 from functools import wraps
 
@@ -21,6 +21,13 @@ while True:
 
 cur = conn.cursor()
 app = Flask(__name__)
+
+swagger = Swagger(app,template={
+    "info": {
+        "title": "wroclaw_crispy_places docs",
+        "description": "REST api endopints"
+    }
+})
 
 def login_required(func):
     @wraps(func)
@@ -191,6 +198,51 @@ def logout():
     session.pop('id', None)
     return home()
 
+#REST api
+@app.route('/api/signin', methods=['POST'])
+def api_signin():
+    try:
+        login = request.form['login']
+        password = request.form['password']
+    except:
+        return jsonify({'message': "Missing data"})
+
+    cur.execute('SELECT id FROM user WHERE login = %s and password = %s',(login, password))
+    acc = cur.fetchone()
+    if acc:
+        session['id']=acc[0]
+        session['logged_in']=True
+        return jsonify({'message': 'Logged in'}),200
+    return jsonify({'message': 'Wrong password'}),401
+
+@app.route('/api/signup', methods=['POST'])
+def api_signup():
+    try:
+        nickname = request.form['nickname']
+        login = request.form['login']
+        password = request.form['password']
+
+    except:
+        return jsonify({'message': 'Missing data'}), 400
+
+    if 'nickname' in request.form and 'login' in request.form and 'password' in request.form:
+        cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
+        acc = cur.fetchone()
+        if acc:
+            return jsonify({'message': 'User exists'}), 400
+            return jsonify({'message': 'Missing data'}), 400
+        else:
+            cur.execute('INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
+            return jsonify({'message': 'User created'}), 200
+
+
+@app.route('/api/logout', methods=['POST'])
+def api_logout():
+    session.pop('logged_in', None)
+    session.pop('id', None)
+    return jsonify({'message': 'Logged out'}),200
+
 if __name__ == "__main__":
-    app.secret_key = os.urandom(13)
-    app.run(debug=True,host='0.0.0.0', port=8001, ssl_context='adhoc')
+    app.config['SECRET_KEY'] = os.urandom(13)
+
+    app.run(debug=True,host='0.0.0.0', port=8001)

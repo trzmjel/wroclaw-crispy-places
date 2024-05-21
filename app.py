@@ -242,7 +242,7 @@ def api_logout():
     session.pop('id', None)
     return jsonify({'message': 'Logged out'}),200
 
-@app.route('/api/location' , methods=['GET'])
+@app.route('/api/location' , methods=['POST','GET'])
 def api_location():
     if not 'logged_in' in session:
         return jsonify({'message': "Unauthorized"}), 401
@@ -250,6 +250,18 @@ def api_location():
         location_id = request.form['location_id']
     except:
         return jsonify({'message': 'Missing location_id'}), 400
+
+    if request.method == "POST":
+        try:
+            comment = request.form['comment']
+        except:
+            return jsonify({'message': 'Missing comment'}), 400
+
+        cur.execute('INSERT INTO comments VALUES (NULL, %s)', (comment,))
+        cur.execute('SELECT MAX(id) FROM comments')
+        latest_id = cur.fetchone()[0]
+        cur.execute('INSERT INTO user_comments_poi VALUES (%s, %s, %s);', (session['id'], location_id, latest_id))
+        return jsonify({'message': 'Comment succesfuly posted'}), 200
 
     cur.execute("SELECT * FROM user_poi WHERE user_id = %s AND poi_id = %s",(session['id'],location_id))
     loc = cur.fetchone();

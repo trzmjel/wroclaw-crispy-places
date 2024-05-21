@@ -204,6 +204,7 @@ def api_signin():
     acc = cur.fetchone()
     if acc:
         session['id']=acc[0]
+        session['logged_in']=True
         return jsonify({'message': 'Logged in'}),200
     else: return jsonify({'message': 'Wrong password'}),401
 
@@ -227,7 +228,8 @@ def api_signup():
 
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
-
+    session.pop('logged,in', None)
+    session.pop('id', None)
     return jsonify({'message': 'Logged out'}),200
 
 if __name__ == "__main__":

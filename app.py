@@ -329,6 +329,27 @@ def api_scanner():
 
     return jsonify({'message': 'Location not found'}), 404
 
+@app.route("/api/profile", methods=['GET'])
+def api_profile():
+    if not 'logged_in' in session:
+        return jsonify({'message': 'Unauthorized'}), 401
+    cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
+                FROM user u
+                LEFT JOIN user_poi p ON u.id = p.user_id
+                WHERE u.id = %s
+                GROUP BY u.id""",(session['id'],))
+    acc = cur.fetchone()
+
+    cur.execute("""SELECT description
+                FROM user_achievements ua
+                JOIN user u
+                ON ua.user_id = u.id
+                JOIN achievements a
+                ON a.id = ua.achievements_id
+                WHERE ua.user_id= %s""",(session['id'],))
+    achievements = cur.fetchall()
+    return jsonify({'account': acc, 'achievements': achievements})
+
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)
     app.run(debug=True,host='0.0.0.0', port=8001)

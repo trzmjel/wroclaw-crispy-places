@@ -358,6 +358,17 @@ def api_location():
 
 @app.route('/api/scoreboard', methods=['GET'])
 def api_scoreboard():
+    """
+    Get a ranking of users
+    ---
+    tags:
+      - Users
+    responses:
+        200:
+            description: Ranking of users
+        401:
+            description: Unauthorized request
+    """
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
     cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
@@ -370,6 +381,26 @@ def api_scoreboard():
 
 @app.route('/api/scanner', methods=['POST'])
 def api_scanner():
+    """
+    Add user based on his qr code
+    ---
+    tags:
+      - Users
+    parameters:
+      - in: query
+        name: qr_code
+        type: string
+        required: true
+    responses:
+        200:
+            description: Location added to user
+        400:
+            description: Missing qr_code
+        401:
+            description: Unauthorized request
+        404:
+            description: Location not found
+    """
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
     qr_code = request.args.get('qr_code')
@@ -390,6 +421,17 @@ def api_scanner():
 
 @app.route("/api/profile", methods=['GET'])
 def api_profile():
+    """
+    Get informations and achievements of logged in user
+    ---
+    tags:
+      - Users
+    responses:
+        200:
+            description: Informations about user
+        401:
+            description: Unauthorized request
+    """
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
     cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
@@ -407,7 +449,7 @@ def api_profile():
                 ON a.id = ua.achievements_id
                 WHERE ua.user_id= %s""",(session['id'],))
     achievements = cur.fetchall()
-    return jsonify({'account': acc, 'achievements': achievements})
+    return jsonify({'account': acc, 'achievements': achievements}),
 
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)

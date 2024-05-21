@@ -308,6 +308,27 @@ def api_scoreboard():
     rankings = cur.fetchall()
     return jsonify('rankings', rankings)
 
+@app.route('/api/scanner', methods=['POST'])
+def api_scanner():
+    if not 'logged_in' in session:
+        return jsonify({'message': 'Unauthorized'}), 401
+    try:
+        qr_code = request.form['qr_code']
+    except:
+        return jsonify({'message': 'Missing qr_code'}), 400
+    cur.execute('SELECT id FROM poi WHERE name = %s',(qr_code,))
+    loc = cur.fetchone()
+    if loc:
+        cur.execute('SELECT * FROM user_poi WHERE poi_id = %s AND user_id = %s',(loc[0],session['id']))
+        if not cur.fetchone():
+            cur.execute('INSERT INTO user_poi VALUES(%s,%s);',(loc[0],session['id']))
+            cur.execute('INSERT INTO user_achievements VALUES(%s,%s)',(session['id'],loc[0]))
+            return jsonify({'message': 'Location added to user succesfully'}), 200
+        else:
+            return jsonify({'message': 'Location already added to user'}), 200
+
+    return jsonify({'message': 'Location not found'}), 404
+
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)
     app.run(debug=True,host='0.0.0.0', port=8001)

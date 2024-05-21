@@ -21,9 +21,10 @@ while True:
 
 cur = conn.cursor()
 app = Flask(__name__)
+
 swagger = Swagger(app,template={
     "info": {
-        "title": "wroclaw_crispy_places docs"
+        "title": "wroclaw_crispy_places docs",
         "description": "REST api endopints"
     }
 })
@@ -197,42 +198,48 @@ def logout():
 #REST api
 @app.route('/api/signin', methods=['POST'])
 def api_signin():
-    data = request.json
-    login = data.get('login')
-    password = data.get('password')
+    try:
+        login = request.form['login']
+        password = request.form['password']
+    except:
+        return jsonify({'message': "Missing data"})
+
     cur.execute('SELECT id FROM user WHERE login = %s and password = %s',(login, password))
     acc = cur.fetchone()
     if acc:
         session['id']=acc[0]
         session['logged_in']=True
         return jsonify({'message': 'Logged in'}),200
-    else: return jsonify({'message': 'Wrong password'}),401
-
-    return jsonify({'message': 'Missing login or password'}),400
+    return jsonify({'message': 'Wrong password'}),401
 
 @app.route('/api/signup', methods=['POST'])
 def api_signup():
+    try:
+        nickname = request.form['nickname']
+        login = request.form['login']
+        password = request.form['password']
+
+    except:
+        return jsonify({'message': 'Missing data'}), 400
+
     if 'nickname' in request.form and 'login' in request.form and 'password' in request.form:
-         nickname = request.form['nickname']
-         login = request.form['login']
-         password = request.form['password']
-         cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
-         acc = cur.fetchone()
-         if acc:
-             return jsonify({'message': 'User exists'}), 400
-         elif not nickname or not login or not password:
-             return jsonify({'message': 'Missing data'}), 400
-         else:
-             cur.execute('INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
-             return jsonify({'message': 'User created'}),200
+        cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
+        acc = cur.fetchone()
+        if acc:
+            return jsonify({'message': 'User exists'}), 400
+            return jsonify({'message': 'Missing data'}), 400
+        else:
+            cur.execute('INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
+            return jsonify({'message': 'User created'}), 200
+
 
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
-    session.pop('logged,in', None)
+    session.pop('logged_in', None)
     session.pop('id', None)
     return jsonify({'message': 'Logged out'}),200
 
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)
 
-    app.run(debug=True,host='0.0.0.0', port=8001, ssl_context='adhoc')
+    app.run(debug=True,host='0.0.0.0', port=8001)

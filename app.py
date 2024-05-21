@@ -296,6 +296,18 @@ def api_location():
     percentage = cur.fetchone()[0]
     return jsonify({'name':loc[1], 'address':loc[2], 'percentage':percentage, 'been_here':been_here, 'comments':comments})
 
+@app.route('/api/scoreboard', methods=['GET'])
+def api_scoreboard():
+    if not 'logged_in' in session:
+        return jsonify({'message': 'Unauthorized'}), 401
+    cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
+                FROM user u
+                LEFT JOIN user_poi p ON u.id = p.user_id
+                GROUP BY u.id
+                ORDER BY points DESC;""")
+    rankings = cur.fetchall()
+    return jsonify('rankings', rankings)
+
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)
     app.run(debug=True,host='0.0.0.0', port=8001)

@@ -1,5 +1,5 @@
 from flask import Flask, session, render_template, request, redirect, url_for, jsonify
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flasgger import Swagger
 import os, folium, mariadb
 from time import sleep
 from functools import wraps
@@ -21,6 +21,7 @@ while True:
 
 cur = conn.cursor()
 app = Flask(__name__)
+swagger = Swagger(app)
 
 def login_required(func):
     @wraps(func)

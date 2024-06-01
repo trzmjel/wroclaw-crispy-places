@@ -189,7 +189,7 @@ def location(location_id):
     m.get_root().height = "100%"
     iframe = m.get_root()._repr_html_()
 
-    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], percentage=percentage , been_here=been_here, comments=comments, location_id=location_id, nickname=nickname)
+    return render_template('location.html',iframe=iframe, name=loc[1], address=loc[2], description=loc[3], percentage=percentage , been_here=been_here, comments=comments, location_id=location_id, nickname=nickname)
 
 @app.route('/logout')
 @login_required

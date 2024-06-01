@@ -14,11 +14,14 @@
             {{ iframe | safe }}
         </div>
         <div class="h-[calc(100%-14rem)] pt-2">
-            <div class="h-20">
-                <label class="px-2">{{ name | safe }}</label> <br>
-                <label class="px-2">{{ address | safe }}</label> <br>
-                <label class="px-2">Zdobyło {{ percentage | safe }}%</label>
-                <label class="px-2">Zdobyto: {{ been_here | safe}}</label>
+            <div class="h-fit">
+                <label class="block font-bold px-2 pb-1">{{ name | safe }}</label>
+                <label class="block font-bold px-2 pb-2">{{ address | safe }}</label>
+                <label class="block px-2 pb-4 text-justify">{{ description | safe }}</label>
+                <div class="flex flex-row">
+                    <label class="block px-2 w-[calc(100%-7rem)] text-left">Zdobyło {{ percentage | safe }}%</label>
+                    <label class="block px-2 text-right">Zdobyto: {{ been_here | safe}}</label>
+                </div>
             </div>
             <!-- Comments section -->
             <div class="h-dvh pt-2">
@@ -33,10 +36,10 @@
                             <div class="flex py-1">
                                 <input type = "text" name="comment" contenteditable="true" class="border border-[#d2cec6] rounded-lg focus:outline-none px-1 w-[calc(100%-0.5rem)] text-wrap flex-grow min-h-20"></span>
                             </div>
-                            <div class="flex flex-row overflow-hidden">
-                                <label class="block text-sm pl-1 p-0.5">500/500</label>
+                            <!--- <div class="flex flex-row overflow-hidden">
+                                <label class="block text-sm pl-1 p-0.5">500/500</label> --->
                                 <input class="block ml-auto border-[#d2cec6] border text-[#FCFAF6] bg-[#948084] p-0.5 text-sm rounded-lg" type="submit" value="Opublikuj">
-                            </div>
+                            <!--- </div> --->
                             </form>
                         </div>
                         {% for c in comments %}

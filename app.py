@@ -269,6 +269,7 @@ def api_signup():
         required: true
     responses:
         200:
+            description: Succesfuly created an user
             schema:
                 type: object
                 properties:
@@ -276,6 +277,7 @@ def api_signup():
                         type: string
                         example: User created
         400:
+            description: Missing some parameter
             schema:
                 type: object
                 properties:
@@ -283,6 +285,7 @@ def api_signup():
                         type: string
                         example: Missing password
         409:
+            description: User already exists
             schema:
                 type: object
                 properties:
@@ -448,24 +451,24 @@ def api_post_location():
       required: true
     responses:
         200:
+            description: Succesfuly commented under location
             schema:
-                description: Succesfuly commented under location
                 type: object
                 properties:
                     message:
                         example: Comment succesfuly posted
                         type: string
         400:
+            description: Missing data in request body
             schema:
-                description: Missing data in request body
                 type: object
                 properties:
                     message:
                         example: Missing location_id
                         type: string
         401:
+            description: Unauthorized
             schema:
-                description: Unauthorized
                 type: object
                 properties:
                     message:
@@ -503,7 +506,7 @@ def api_scoreboard():
       - Users
     responses:
         200:
-            description: Ranking of user)s
+            description: Ranking of users
             schema:
                 type: object
                 properties:
@@ -544,7 +547,7 @@ def api_scoreboard():
 @app.route('/api/scanner', methods=['POST'])
 def api_scanner():
     """
-    Add user based on his qr code
+    Add user to location based on his qr code
     ---
     tags:
       - Users

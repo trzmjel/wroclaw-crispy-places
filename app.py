@@ -116,7 +116,7 @@ def profile():
                 FROM user u
                 LEFT JOIN user_poi p ON u.id = p.user_id
                 GROUP BY u.id)
-                SELECT * FROM ranked_users WHERE id=3""")
+                SELECT * FROM ranked_users WHERE id = %s""", (session['id'],))
     acc = cur.fetchone()
 
     cur.execute("""SELECT description
@@ -651,7 +651,7 @@ def api_profile():
                 FROM user u
                 LEFT JOIN user_poi p ON u.id = p.user_id
                 GROUP BY u.id)
-                SELECT * FROM ranked_users WHERE id=3""")
+                SELECT * FROM ranked_users WHERE id = %s""",(session['id'],))
     acc = cur.fetchone()
     acc = {'user': acc[0] , 'points': acc[1], 'place': acc[2]}
 

@@ -308,6 +308,7 @@ def api_logout():
                 properties:
                     message:
                         type: string
+                        example: Logged out
     """
     session.pop('logged_in', None)
     session.pop('id', None)

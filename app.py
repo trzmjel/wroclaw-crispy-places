@@ -9,7 +9,7 @@ while True:
         conn = mariadb.connect(
             user="root",
             password="example",
-            host="db",
+            host="127.0.0.1",
             port=3306,
             database="aplikacja_turystyczna",
             autocommit=True
@@ -217,13 +217,22 @@ def api_signin():
       required: true
     responses:
         200:
+            description: Succesfuly logged into service
             schema:
                 type: object
                 properties:
                     message:
+                        example: Logged in
                         type: string
         401:
             description: Invalid credentials
+            schema:
+                type: object
+                properties:
+                    message:
+                        example: Invalid credentials
+                        type: string
+
     """
     login = request.args.get('login')
     password = request.args.get('password')
@@ -567,4 +576,4 @@ def api_profile():
 
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)
-    app.run(debug=True,host='0.0.0.0', port=8000)
+    app.run(debug=True,host='0.0.0.0', port=8001)

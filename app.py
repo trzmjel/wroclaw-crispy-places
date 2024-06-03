@@ -556,12 +556,36 @@ def api_scanner():
     responses:
         200:
             description: Location added to user
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Location added to user succesfully
         400:
             description: Missing qr_code
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Missing qr_code
         401:
             description: Unauthorized request
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Unauthorized
         404:
             description: Location not found
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Location not found
     """
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401

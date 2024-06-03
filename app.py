@@ -504,8 +504,31 @@ def api_scoreboard():
     responses:
         200:
             description: Ranking of users
+            schema:
+                type: object
+                properties:
+                    rankings:
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                place:
+                                    type: integer
+                                    example: 1
+                                points:
+                                    type: integer
+                                    example: 1
+                                user:
+                                    type: string
+                                    example: Tester
         401:
             description: Unauthorized request
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Unauthorized
     """
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
@@ -515,7 +538,8 @@ def api_scoreboard():
                 GROUP BY u.id
                 ORDER BY points DESC;""")
     rankings = cur.fetchall()
-    return jsonify('rankings', rankings)
+    rankings = [{'user': r[0], 'points': r[1], 'place': r[2]} for r in rankings]
+    return jsonify({'rankings': rankings}), 200
 
 @app.route('/api/scanner', methods=['POST'])
 def api_scanner():

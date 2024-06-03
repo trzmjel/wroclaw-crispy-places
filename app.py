@@ -304,8 +304,66 @@ def api_logout():
     session.pop('id', None)
     return jsonify({'message': 'Logged out'}),200
 
-@app.route('/api/location' , methods=['POST','GET'])
-def api_location():
+@app.route('/api/location' , methods=['GET'])
+def api_get_location():
+    """
+    Get informations about location
+    ---
+    tags:
+      - Locations
+    summary: Returns informations about location
+    parameters:
+    - in: query
+      name: location_id
+      type: string
+      required: true
+    responses:
+        200:
+            description: Returns location information succesfuly
+            schema:
+                type: object
+                properties:
+                    name:
+                        type: string
+                        example: ZOO Wrocław
+                    address:
+                        type: string
+                        example: Zygmunta Wróblewskiego 1-5, 51-618
+                    been_here:
+                        type: string
+                        example: Tak
+                    percentage:
+                        type: string
+                        example: 50.0
+                    comments:
+                        type: array
+                        items:
+                            type: object
+                            properties:
+                                comment:
+                                    type: string
+                                    example: I love this place
+                                user:
+                                    example: Tester
+                                    type: string
+        400:
+            description: Missing something in request
+            schema:
+                type: object
+                properties:
+                    message:
+                        example: Missing location_id
+                        type: string
+        401:
+            description: Unauthorized
+            schema:
+                type: object
+                properties:
+                    message:
+                        example: Unauthorized
+                        type: string
+
+    """
     if not 'logged_in' in session:
         return jsonify({'message': "Unauthorized"}), 401
     location_id = request.args.get('location_id')
@@ -316,17 +374,6 @@ def api_location():
     loc = cur.fetchone();
     if not loc:
         return jsonify({'message': 'Unauthorized'}), 401
-
-    if request.method == "POST":
-        comment = request.args.get('comment')
-        if not comment:
-            return jsonify({'message': 'Missing comment'}), 400
-
-        cur.execute('INSERT INTO comments VALUES (NULL, %s)', (comment,))
-        cur.execute('SELECT MAX(id) FROM comments')
-        latest_id = cur.fetchone()[0]
-        cur.execute('INSERT INTO user_comments_poi VALUES (%s, %s, %s);', (session['id'], location_id, latest_id))
-        return jsonify({'message': 'Comment succesfuly posted'}), 200
 
     cur.execute("SELECT * FROM poi WHERE id = %s",(location_id,))
     loc = cur.fetchone()
@@ -348,6 +395,7 @@ def api_location():
                     ON user_comments_poi.user_id = user.id
                     WHERE user_comments_poi.poi_id = %s""",(location_id,))
     comments = cur.fetchall()
+    comments = [{'comment': c[0], 'user': c[1]} for c in comments]
 
     cur.execute("""SELECT (v.users_visited * 100.0 / u.users_all) AS percent
                 FROM
@@ -355,6 +403,71 @@ def api_location():
                     (SELECT COUNT(user_id) AS users_visited FROM user_poi WHERE poi_id=%s) AS v;""",(location_id,))
     percentage = cur.fetchone()[0]
     return jsonify({'name':loc[1], 'address':loc[2], 'percentage':percentage, 'been_here':been_here, 'comments':comments})
+
+@app.route('/api/location', methods=['POST'])
+def api_post_location():
+
+    """
+    Put comment into location's discusion
+    ---
+    tags:
+      - Locations
+    parameters:
+    - in: query
+      name: location_id
+      type: string
+      required: true
+    - in: query
+      name: comment
+      type: string
+      required: true
+    responses:
+        200:
+            schema:
+                description: Succesfuly commented under location
+                type: object
+                properties:
+                    message:
+                        example: Comment succesfuly posted
+                        type: string
+        400:
+            schema:
+                description: Missing data in request body
+                type: object
+                properties:
+                    message:
+                        example: Missing location_id
+                        type: string
+        401:
+            schema:
+                description: Unauthorized
+                type: object
+                properties:
+                    message:
+                        example: Unauthorized
+                        type: string
+    """
+
+    if not 'logged_in' in session:
+        return jsonify({'message': "Unauthorized"}), 401
+    location_id = request.args.get('location_id')
+    if not location_id:
+        return jsonify({'message': 'Missing location_id'}), 400
+
+    cur.execute("SELECT * FROM user_poi WHERE user_id = %s AND poi_id = %s",(session['id'],location_id))
+    loc = cur.fetchone();
+    if not loc:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    comment = request.args.get('comment')
+    if not comment:
+        return jsonify({'message': 'Missing comment'}), 400
+
+    cur.execute('INSERT INTO comments VALUES (NULL, %s)', (comment,))
+    cur.execute('SELECT MAX(id) FROM comments')
+    latest_id = cur.fetchone()[0]
+    cur.execute('INSERT INTO user_comments_poi VALUES (%s, %s, %s);', (session['id'], location_id, latest_id))
+    return jsonify({'message': 'Comment succesfuly posted'}), 200
 
 @app.route('/api/scoreboard', methods=['GET'])
 def api_scoreboard():

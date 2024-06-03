@@ -503,7 +503,7 @@ def api_scoreboard():
       - Users
     responses:
         200:
-            description: Ranking of users
+            description: Ranking of user)s
             schema:
                 type: object
                 properties:
@@ -590,9 +590,30 @@ def api_profile():
       - Users
     responses:
         200:
-            description: Informations about user
+            description: Informations about user that is logged in
+            schema:
+                type: object
+                properties:
+                    account:
+                        type: object
+                        properties:
+                            place:
+                                type: integer
+                                example: 1
+                            points:
+                                type: integer
+                                example: 1
+                            user:
+                                type: string
+                                example: Tester
         401:
             description: Unauthorized request
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Unauthorized
     """
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
@@ -603,6 +624,7 @@ def api_profile():
                 WHERE u.id = %s
                 GROUP BY u.id""",(session['id'],))
     acc = cur.fetchone()
+    acc = {'user': acc[0] , 'points': acc[1], 'place': acc[2]}
 
     cur.execute("""SELECT description
                 FROM user_achievements ua
@@ -612,6 +634,7 @@ def api_profile():
                 ON a.id = ua.achievements_id
                 WHERE ua.user_id= %s""",(session['id'],))
     achievements = cur.fetchall()
+    achievements = [a[0] for a in achievements]
     return jsonify({'account': acc, 'achievements': achievements}), 200
 
 if __name__ == "__main__":

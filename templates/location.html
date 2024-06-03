@@ -7,6 +7,10 @@
     <link href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet">
 </head>
 <body class="h-screen text-[#5f4f53]">
+    <!-- Panel -->
+    {% with title="Lokacja" %}
+        {% include 'nav_panel.html' %}
+    {% endwith %} 
     <!-- Content -->
     <div class="p-1 bg-pattern-stripes">
         <!-- Map with specific location info -->

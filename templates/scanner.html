@@ -8,7 +8,9 @@
 </head>
 <body class="h-screen text-[#5f4f53]">
     <!-- Panel -->
-    {% include 'nav_panel.html' %}
+    {% with title="QR" %}
+        {% include 'nav_panel.html' %}
+    {% endwith %} 
     <!-- Content -->
     <div class="h-[calc(100%-3rem)] p-1 bg-pattern-stripes">
         <div class="h-fit">

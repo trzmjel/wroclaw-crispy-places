@@ -8,7 +8,9 @@
 </head>
 <body class="h-screen text-[#5f4f53]">
     <!-- Panel -->
-    {% include 'nav_panel.html' %}
+    {% with title="Profil" %}
+        {% include 'nav_panel.html' %}
+    {% endwith %} 
     <!-- Content -->
     <div class="h-[calc(100%-3rem)] p-1 py-2 bg-pattern-stripes">
         <!-- Profile data -->

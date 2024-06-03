@@ -9,7 +9,7 @@ while True:
         conn = mariadb.connect(
             user="root",
             password="example",
-            host="127.0.0.1",
+            host="db",
             port=3306,
             database="aplikacja_turystyczna",
             autocommit=True
@@ -666,4 +666,4 @@ def api_profile():
 
 if __name__ == "__main__":
     app.config['SECRET_KEY'] = os.urandom(13)
-    app.run(debug=True,host='0.0.0.0', port=8001)
+    app.run(debug=True,host='0.0.0.0', port=8000)

@@ -274,6 +274,21 @@ def api_signup():
                 properties:
                     message:
                         type: string
+                        example: User created
+        400:
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Missing password
+        409:
+            schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: User exists
     """
     nickname = request.args.get('nickname')
     login = request.args.get('login')
@@ -287,7 +302,7 @@ def api_signup():
     cur.execute('SELECT * FROM user WHERE nickname = %s OR login = %s',(nickname, login))
     acc = cur.fetchone()
     if acc:
-        return jsonify({'message': 'User exists'}), 400
+        return jsonify({'message': 'User exists'}), 409
     else:
         cur.execute('INSERT INTO user VALUES (NULL, %s, %s, %s)',(nickname, login, password))
         return jsonify({'message': 'User created'}), 200

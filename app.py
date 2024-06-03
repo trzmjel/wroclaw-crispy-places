@@ -111,11 +111,12 @@ def scoreboard():
 @app.route("/profile")
 @login_required
 def profile():
-    cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
+    cur.execute("""WITH ranked_users AS
+                (SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position, u.id as id
                 FROM user u
                 LEFT JOIN user_poi p ON u.id = p.user_id
-                WHERE u.id = %s
-                GROUP BY u.id""",(session['id'],))
+                GROUP BY u.id)
+                SELECT * FROM ranked_users WHERE id=3""")
     acc = cur.fetchone()
 
     cur.execute("""SELECT description
@@ -645,11 +646,12 @@ def api_profile():
     if not 'logged_in' in session:
         return jsonify({'message': 'Unauthorized'}), 401
 
-    cur.execute("""SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position
+    cur.execute("""WITH ranked_users AS
+                (SELECT u.nickname, COUNT(p.user_id) AS points, RANK() OVER (ORDER BY points DESC) AS position, u.id as id
                 FROM user u
                 LEFT JOIN user_poi p ON u.id = p.user_id
-                WHERE u.id = %s
-                GROUP BY u.id""",(session['id'],))
+                GROUP BY u.id)
+                SELECT * FROM ranked_users WHERE id=3""")
     acc = cur.fetchone()
     acc = {'user': acc[0] , 'points': acc[1], 'place': acc[2]}
 

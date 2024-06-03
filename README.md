@@ -14,7 +14,7 @@ podman compose up -d
 ```bash
 git clone https://github.com/trzmjel/wroclaw-crispy-places.git
 cd wroclaw-crispy-places
-docker build -t trzmjel/wroclaw-crispy-places .
+docker build . -t wroclaw-crispy-places --file Containerfile
 docker compose up -d
 ```
 or use podman-desktop or docker-desktop for GUI.

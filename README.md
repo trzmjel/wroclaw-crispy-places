@@ -18,3 +18,6 @@ docker build . -t wroclaw-crispy-places --file Containerfile
 docker compose up -d
 ```
 or use podman-desktop or docker-desktop for GUI.
+
+## REST API
+Documentation of REST API can be found on running server at port 8000 on endpoint /apidocs
